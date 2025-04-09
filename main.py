@@ -1,6 +1,5 @@
 import cv2
 import mediapipe as mp
-import numpy as np
 import pyautogui as pyagi
 
 cap = cv2.VideoCapture(0)
@@ -32,22 +31,19 @@ while True:
             index_tip = hand_landmarks.landmark[8]
             x, y = int(index_tip.x * frame_width), int(index_tip.y * frame_height)
 
+            # if distance between thumb and index finger is less then 0.03 cm, left click
             thumb_tip = hand_landmarks.landmark[4]
             distance = ((index_tip.x - thumb_tip.x)**2 + (index_tip.y - thumb_tip.y)**2)**0.5
             if distance < 0.03:
                 pyagi.click()
 
+            # if distance between middle finger and thumb is less then 0.03 cm, right click
             middle_tip = hand_landmarks.landmark[12]
             distance = ((middle_tip.x - thumb_tip.x)**2 + (middle_tip.y - thumb_tip.y)**2)**0.5
             if distance < 0.03:
                 pyagi.rightClick()
 
-            # fingertips_down = all(
-            #     hand_landmarks.landmark[tip].y > hand_landmarks.landmark[pip].y
-            #     for tip, pip in zip(fingertips, pip_joints)
-            # )
-            
-            # mouse_x, mouse_y = pyagi.position()
+            # if distance between middle and index finger is less then 0.03 cm, use the mouse drag
             curr_x, curr_y = mouse_x, mouse_y
             distance = ((middle_tip.x - index_tip.x)**2 + (middle_tip.y - index_tip.y)**2)**0.5
             if distance<0.03:
